@@ -197,7 +197,7 @@ class BottomTools extends StatelessWidget {
                         });
                       }
                     } else {
-                      showToast('Design something to save image');
+                      // showToast('Design something to save image');
                     }
                     // setState(() {
                     _createVideo = false;
