@@ -150,80 +150,96 @@ class BottomTools extends StatelessWidget {
               /// save final image to gallery
 
               AnimatedOnTapButton(
-                  onTap: () async {
-                    String pngUri;
-                    if (paintingNotifier.lines.isNotEmpty ||
-                        itemNotifier.draggableWidget.isNotEmpty) {
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (BuildContext context) {
-                          return Center(
-                            child: loader ??
-                                Card(
-                                  color: Colors.white,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(50),
-                                    child: const CircularProgressIndicator(),
-                                  ),
-                                ),
-                          );
-                        },
-                      );
+                onTap: () async {
+                  String? pngUri; // Nullable to handle potential null cases
+                  bool isSuccess = false;
 
-                      for (var element in itemNotifier.draggableWidget) {
-                        if (element.type == ItemType.gif ||
-                            element.animationType != TextAnimationType.none) {
-                          // setState(() {
-                          _createVideo = true;
-                          // });
+                  if (paintingNotifier.lines.isNotEmpty ||
+                      itemNotifier.draggableWidget.isNotEmpty) {
+                    // Show loader dialog
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) {
+                        return Center(
+                          child: loader ??
+                              Card(
+                                color: Colors.white,
+                                child: Container(
+                                  padding: const EdgeInsets.all(50),
+                                  child: const CircularProgressIndicator(),
+                                ),
+                              ),
+                        );
+                      },
+                    );
+
+                    // Check if a video or an image needs to be created
+                    for (var element in itemNotifier.draggableWidget) {
+                      if (element.type == ItemType.gif ||
+                          element.animationType != TextAnimationType.none) {
+                        _createVideo = true;
+                      }
+                    }
+
+                    try {
+                      if (_createVideo) {
+                        debugPrint('Creating video...');
+                        await renderWidget!(); // Perform the video rendering
+                        isSuccess = true;
+                      } else {
+                        debugPrint('Creating image...');
+                        pngUri = await takePicture(
+                          contentKey: contentKey,
+                          context: context,
+                          saveToGallery: false,
+                          fileName: controlNotifier.folderName,
+                        );
+
+                        if (pngUri != null) {
+                          isSuccess = true;
+                          onDone(
+                              pngUri); // Pass the generated URI to the onDone callback
+                        } else {
+                          debugPrint('Error: pngUri is null');
                         }
                       }
-                      if (_createVideo) {
-                        debugPrint('creating video');
-                        await renderWidget!();
-                      } else {
-                        debugPrint('creating image');
-                        await takePicture(
-                                contentKey: contentKey,
-                                context: context,
-                                saveToGallery: false,
-                                fileName: controlNotifier.folderName)
-                            .then((bytes) {
-                          Navigator.of(context, rootNavigator: true).pop();
-                          if (bytes != null) {
-                            pngUri = bytes;
-                            onDone(pngUri);
-                          } else {
-                            // ignore: avoid_print
-                            print("error");
-                          }
-                        });
+                    } catch (error) {
+                      debugPrint('Error during processing: $error');
+                    } finally {
+                      // Dismiss the loader dialog
+                      Navigator.of(context, rootNavigator: true).pop();
+
+                      if (!isSuccess) {
+                        debugPrint('Operation failed');
+                        // Optionally show a toast or snackbar for failure
                       }
-                    } else {
-                      // showToast('Design something to save image');
                     }
-                    // setState(() {
-                    _createVideo = false;
-                    // });
-                  },
-                  child: onDoneButtonStyle ??
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            border:
-                                Border.all(color: Colors.white, width: 1.5)),
-                        child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(left: 0, right: 2),
-                                child: Icon(Icons.share_sharp, size: 28),
-                              ),
-                            ]),
-                      ))
+                  } else {
+                    debugPrint('No items to process.');
+                  }
+
+                  _createVideo = false; // Reset the flag
+                },
+                child: onDoneButtonStyle ??
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.white, width: 1.5),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 0, right: 2),
+                            child: Icon(Icons.share_sharp, size: 28),
+                          ),
+                        ],
+                      ),
+                    ),
+              )
 
               // Padding(
               //   padding: const EdgeInsets.only(right: 10),
