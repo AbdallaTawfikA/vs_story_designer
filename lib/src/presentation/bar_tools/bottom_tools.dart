@@ -155,23 +155,21 @@ class BottomTools extends StatelessWidget {
                     if (paintingNotifier.lines.isNotEmpty ||
                         itemNotifier.draggableWidget.isNotEmpty) {
                       showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (BuildContext context) {
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                loader ??
-                                    Card(
-                                      color: Colors.white,
-                                      child: Container(
-                                        padding: const EdgeInsets.all(50),
-                                        child: const CircularProgressIndicator(),
-                                      ),
-                                    ),
-                              ],
-                            );
-                          });
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext context) {
+                          return Center(
+                            child: loader ??
+                                Card(
+                                  color: Colors.white,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(50),
+                                    child: const CircularProgressIndicator(),
+                                  ),
+                                ),
+                          );
+                        },
+                      );
 
                       for (var element in itemNotifier.draggableWidget) {
                         if (element.type == ItemType.gif ||
