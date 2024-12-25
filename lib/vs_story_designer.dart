@@ -152,7 +152,7 @@ class VSStoryDesigner extends StatefulWidget {
   final int? galleryThumbnailQuality;
   final String centerText;
 
-  final Widget? loader;
+  final Widget? loaderWidget;
   // share image file path
   final String? mediaPath;
 
@@ -172,7 +172,7 @@ class VSStoryDesigner extends StatefulWidget {
       this.editorBackgroundColor,
       this.galleryThumbnailQuality,
       this.mediaPath,
-        this.loader,
+        this.loaderWidget,
       required this.centerText});
 
   @override
@@ -212,7 +212,7 @@ class _VSStoryDesignerState extends State<VSStoryDesigner> {
         // ChangeNotifierProvider(create: (_) => RenderingNotifier()),
       ],
       child: MainView(
-        loader:widget.loader,
+        loader:widget.loaderWidget,
         themeType: widget.themeType ?? ThemeType.dark,
         giphyKey: widget.giphyKey ?? 'C4dMA7Q19nqEGdpfj82T8ssbOeZIylD4',
         onDone: widget.onDone,
