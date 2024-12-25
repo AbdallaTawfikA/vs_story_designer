@@ -81,6 +81,7 @@ class MainView extends StatefulWidget {
 
 // share image file path
   final String? mediaPath;
+  final Widget? loader;
 
   MainView(
       {super.key,
@@ -98,7 +99,9 @@ class MainView extends StatefulWidget {
       this.editorBackgroundColor,
       this.galleryThumbnailQuality,
       this.centerText,
-      this.mediaPath});
+      this.mediaPath,
+        this.loader,
+      });
 
   @override
   _MainViewState createState() => _MainViewState();
@@ -107,6 +110,7 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   /// content container key
   final GlobalKey contentKey = GlobalKey();
+
 
   ///Editable item
   EditableItem? _activeItem;
@@ -404,6 +408,7 @@ class _MainViewState extends State<MainView> {
                           Align(
                             alignment: Alignment.bottomCenter,
                             child: BottomTools(
+                              loader: widget.loader,
                               contentKey: contentKey,
                               // renderWidget: () => startRecording(
                               //     controlNotifier: controlNotifier,

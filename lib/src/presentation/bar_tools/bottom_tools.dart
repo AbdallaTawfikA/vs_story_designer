@@ -23,13 +23,17 @@ class BottomTools extends StatelessWidget {
 
   /// editor background color
   final Color? editorBackgroundColor;
+  final Widget? loader;
+
   const BottomTools(
       {super.key,
       required this.contentKey,
       required this.onDone,
       this.renderWidget,
       this.onDoneButtonStyle,
-      this.editorBackgroundColor});
+      this.editorBackgroundColor,
+        this.loader
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -157,12 +161,14 @@ class BottomTools extends StatelessWidget {
                             return Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Card(
-                                    color: Colors.white,
-                                    child: Container(
+                                loader ??
+                                    Card(
+                                      color: Colors.white,
+                                      child: Container(
                                         padding: const EdgeInsets.all(50),
-                                        child:
-                                            const CircularProgressIndicator())),
+                                        child: const CircularProgressIndicator(),
+                                      ),
+                                    ),
                               ],
                             );
                           });
